@@ -1,0 +1,374 @@
+
+---
+
+📁 Root Directory Files
+
+SECURITY.md
+
+```markdown
+# Security Policy
+
+## Supported Versions
+
+We release patches for security vulnerabilities. Which versions are supported receiving security updates?
+
+| Version | Supported          |
+| ------- | ------------------ |
+| 1.x     | :white_check_mark: |
+| < 1.0   | :x:                |
+
+## Reporting a Vulnerability
+
+Please report security vulnerabilities by email to **security@gitdigital.org**.
+
+You should receive a response within 48 hours. If the issue is confirmed, we will release a patch as soon as possible, typically within a few days.
+
+For critical issues, you can also open a draft security advisory on GitHub:  
+[Create a new security advisory](https://github.com/Gitdigital-products/Grant-Program-Management-repo/security/advisories/new)
+
+Please do **not** open public issues for security vulnerabilities.
+```
+
+SUPPORT.md
+
+```markdown
+# Support
+
+## Where to get help
+
+* **Documentation**: See the `/docs` folder or visit our [GitHub Pages site](https://gitdigital-products.github.io/Grant-Program-Management-repo/)
+* **Issues**: For bugs or feature requests, [open an issue](https://github.com/Gitdigital-products/Grant-Program-Management-repo/issues/new/choose)
+* **Discussions**: Use [GitHub Discussions](https://github.com/Gitdigital-products/Grant-Program-Management-repo/discussions) for questions and community support
+* **Email**: For private inquiries, contact us at **support@gitdigital.org**
+
+## Grant applicants
+
+If you are applying for a grant, please read the [Applicant Guide](/docs/applicant-guides/how-to-apply.md) first.  
+You can track your application status on the [Tracker page](/pages/tracker.md).
+
+## Reviewers
+
+Reviewers should refer to the [Reviewer Guides](/docs/reviewer-guides/).
+```
+
+GOVERNANCE.md
+
+```markdown
+# Governance
+
+This project is maintained by **GitDigital Products** and follows a community-led governance model.
+
+## Roles
+
+* **Program Lead**: Overall responsibility for grant strategy and final decisions.
+* **Maintainers**: Core contributors who manage the repository, review PRs, and guide the project.
+* **Reviewers**: Community members who evaluate grant applications.
+* **Contributors**: Anyone who submits issues, documentation, or code.
+
+## Decision Making
+
+* **Consensus-based**: Technical decisions are made by maintainers seeking rough consensus.
+* **Grant decisions**: Final approval of grants rests with the Program Lead, informed by reviewer scores and governance committee input.
+
+## Code of Conduct
+
+All participants are expected to follow our [Code of Conduct](CODE_OF_CONDUCT.md).
+
+## Changes to Governance
+
+Changes to this document require a pull request approved by at least two maintainers and the Program Lead.
+```
+
+MAINTAINERS.md
+
+```markdown
+# Maintainers
+
+## Active Maintainers
+
+| Name | GitHub Handle | Area |
+|------|---------------|------|
+| Richard | [@RickCreator87](https://github.com/RickCreator87) | Program Lead, Infrastructure |
+| [Your Name] | [@handle] | Automation, GitHub Actions |
+
+## Maintainer Responsibilities
+
+* Review and merge pull requests
+* Triage issues
+* Guide the project roadmap
+* Ensure compliance with our governance and code of conduct
+* Onboard new contributors
+
+## Becoming a Maintainer
+
+Contributors who demonstrate sustained, high-quality contributions may be invited to become maintainers.  
+See [CONTRIBUTING.md](CONTRIBUTING.md) for how to get involved.
+```
+
+CHANGELOG.md
+
+```markdown
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+### Added
+- Initial release of Grant Program Management system
+- Application intake workflow
+- Reviewer assignment automation
+- Scoring and aggregation
+- Transparency reporting
+
+### Changed
+- N/A
+
+### Deprecated
+- N/A
+
+### Removed
+- N/A
+
+### Fixed
+- N/A
+
+### Security
+- N/A
+```
+
+ICON_REGISTRY.md
+
+```markdown
+# Icon Registry
+
+This document defines the official icons used across the project.  
+All icons are stored in `/public/assets/icons/` (SVG format) or represented by emoji in markdown.
+
+| Icon Name | Emoji | Meaning | Used In |
+|-----------|-------|---------|---------|
+| `funding` | 💰 | Funding / Sponsorship | README, sponsor pages |
+| `reviewer` | 👁️ | Reviewer role | Reviewer dashboards, badges |
+| `applicant` | 📝 | Applicant role | Tracker, applications |
+| `grant` | 🎓 | Approved grant | Transparency reports |
+| `badge` | 🏅 | Badge authority | Badge wall, profiles |
+| `automation` | 🤖 | GitHub Action | Workflow documentation |
+| `docs` | 📚 | Documentation | Guides, help sections |
+| `alert` | ⚠️ | Risk flag | Scoring, compliance |
+| `approved` | ✅ | Approved status | Status pages |
+| `declined` | ❌ | Declined status | Status pages |
+
+To add a new icon, update this table and add the SVG file to `/public/assets/icons/`. All icons must be 24x24px.
+```
+
+---
+
+📁 .github/ Directory Files
+
+.github/FUNDING.yml
+
+```yaml
+# These are supported funding model platforms
+
+github: [RickCreator87] # Replace with your GitHub username(s)
+patreon: # Replace with your Patreon username
+open_collective: # Replace with your Open Collective name
+ko_fi: # Replace with your Ko-fi username
+tidelift: # Replace with package name
+community_bridge: # Replace with project name
+liberapay: # Replace with username
+issuehunt: # Replace with username
+otechie: # Replace with username
+custom: ['https://www.buymeacoffee.com/yourname', 'https://paypal.me/yourname'] # Add custom URLs
+```
+
+---
+
+📁 .github/workflows/ Directory Files
+
+.github/workflows/update-tracker.yml
+
+```yaml
+name: Update Tracker Page
+
+on:
+  push:
+    paths:
+      - 'data/master_tracker.csv'
+      - 'data/applications/*.json'
+  schedule:
+    - cron: '0 */6 * * *' # Run every 6 hours
+
+jobs:
+  update-tracker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci # if you have a package.json; otherwise skip
+
+      - name: Generate tracker markdown
+        run: node scripts/generate-tracker.js
+        # This script should read master_tracker.csv and produce pages/tracker.md
+
+      - name: Commit changes
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add pages/tracker.md
+          git diff --quiet && git diff --staged --quiet || git commit -m "Automated tracker update"
+          git push
+```
+
+You'll also need a scripts/generate-tracker.js script. Here's a simple version:
+
+```javascript
+// scripts/generate-tracker.js
+const fs = require('fs');
+const csv = require('csv-parser'); // You'll need to npm install csv-parser
+
+const inputFile = 'data/master_tracker.csv';
+const outputFile = 'pages/tracker.md';
+const results = [];
+
+fs.createReadStream(inputFile)
+  .pipe(csv())
+  .on('data', (data) => results.push(data))
+  .on('end', () => {
+    let markdown = `---
+title: Application Tracker
+layout: default
+---
+
+# Track Your Application
+
+Enter your application ID to see status:
+
+<form>
+  <input type="text" placeholder="APP-2025-001" />
+  <button>Check Status</button>
+</form>
+
+## Recent Submissions
+| ID | Title | Status | Submitted |
+|----|-------|--------|-----------|
+`;
+
+    results.slice(0, 10).forEach(row => {
+      markdown += `| ${row.ID} | ${row.Title} | ${row.Status} | ${row.Submitted} |\n`;
+    });
+
+    fs.writeFileSync(outputFile, markdown);
+    console.log('Tracker updated');
+  });
+```
+
+---
+
+📁 docs/ Directory Files
+
+docs/contributor-onboarding.md
+
+```markdown
+# Contributor Onboarding
+
+Welcome! We're excited to have you contribute to the Grant Program Management system.
+
+## Steps to become a contributor
+
+1. **Read the [Code of Conduct](../CODE_OF_CONDUCT.md)** – we expect all contributors to follow it.
+2. **Set up the project locally** – follow the [Quick Start](../README.md#quick-start) guide.
+3. **Find an issue to work on** – look for [good first issue](https://github.com/Gitdigital-products/Grant-Program-Management-repo/labels/good%20first%20issue) labels.
+4. **Comment on the issue** – let others know you're working on it.
+5. **Fork and clone** the repository.
+6. **Create a branch** with a descriptive name (e.g., `fix-scoring-typo`).
+7. **Make your changes** and commit with a clear message.
+8. **Push and open a pull request** – fill out the PR template.
+9. **Respond to feedback** – maintainers may request changes.
+10. **Celebrate** – once merged, you're a contributor!
+
+## What you can contribute
+
+* **Code**: New features, bug fixes, automation improvements.
+* **Documentation**: Improving guides, writing tutorials.
+* **Design**: Enhancing the Pages site, creating badges/icons.
+* **Community**: Helping answer questions in Discussions.
+
+## Getting help
+
+* Ask in the issue or PR you're working on.
+* Start a [Discussion](https://github.com/Gitdigital-products/Grant-Program-Management-repo/discussions).
+* Tag a maintainer with `@maintainer`.
+
+Thank you for contributing!
+```
+
+---
+
+📁 badges/ Directory Files
+
+badges/README.md
+
+```markdown
+# Badge Authority
+
+This directory defines the badges awarded to contributors, reviewers, and grant recipients.
+
+## Badge Types
+
+| Badge | Description | Awarded To | Schema |
+|-------|-------------|------------|--------|
+| `reviewer` | Recognizes active grant reviewers | Reviewers who complete ≥5 reviews | [reviewer-schema.json](schemas/reviewer-badge-schema.json) |
+| `grantee` | Awarded to approved grant recipients | Grantees | [grantee-schema.json](schemas/grantee-badge-schema.json) |
+| `contributor` | For code/documentation contributors | Contributors with merged PRs | [contributor-schema.json](schemas/contributor-badge-schema.json) |
+| `sponsor` | For financial supporters | Sponsors at certain tiers | [sponsor-schema.json](schemas/sponsor-badge-schema.json) |
+
+## Issuance Workflow
+
+Badges are awarded automatically via GitHub Actions when certain events occur (e.g., PR merged, application approved).  
+See [`.github/workflows/award-badges.yml`](../.github/workflows/award-badges.yml) for details.
+
+Each badge is stored as a JSON file in `/badges/awarded/` with the recipient's ID and badge metadata.
+```
+
+---
+
+📁 Root: SUPPORTER_TIERS.md (Optional)
+
+```markdown
+# Supporter Tiers & Benefits
+
+We are grateful for all financial supporters. Below are the tiers across different platforms and their unified benefits.
+
+## GitHub Sponsors
+
+| Tier | Monthly Amount | Benefits |
+|------|----------------|----------|
+| Backer | $5 | Name listed in README, supporter badge |
+| Contributor | $20 | Above + early access to grant applications |
+| Advocate | $50 | Above + quarterly community call invite |
+| Champion | $100+ | Above + custom thank-you, logo on website |
+
+## Patreon
+
+Tiers are mirrored from GitHub Sponsors with equivalent benefits.
+
+## Open Collective
+
+One-time donations also receive recognition and badges based on amount.
+
+All supporters receive a **supporter badge** on their GitHub profile (via [Badge Authority](badges/README.md)).
+```
+
+---
+
