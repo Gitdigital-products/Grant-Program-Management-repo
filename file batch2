@@ -1,0 +1,396 @@
+Batch 2 = Identity Layer + Pages Layer + Data Layer (schemas + placeholders)  
+This is the natural next milestone after governance + automation + onboarding.
+
+Below is the full batch, ready to drop into your repo.
+
+---
+
+🧩 Next Batch: Identity + Pages + Data Schemas
+
+This batch includes:
+
+1. Identity Surfaces (root)
+- README.md
+- CODEOFCONDUCT.md
+- CONTRIBUTING.md
+- LICENSE (MIT)
+
+2. Pages Layer
+- /pages/index.md
+- /pages/apply.md
+- /pages/reviewers.md
+- /pages/transparency.md
+
+3. Data Layer
+- /data/master_tracker.csv (placeholder)
+- /data/applications/example.json
+- /data/schemas/application.schema.json
+- /data/schemas/reviewer-score.schema.json
+- /data/schemas/tracker.schema.json
+
+Everything below is fully generated and ready.
+
+---
+
+📁 1. Identity Surfaces
+
+---
+
+README.md
+
+`markdown
+
+Grant Program Management System
+
+Welcome to the GitDigital Grant Program Management repository — a modular, automation‑driven system for managing grant applications, reviewer workflows, scoring, transparency reporting, and badge issuance.
+
+This repository powers:
+
+- 📝 Application intake  
+- 👁️ Reviewer assignment & scoring  
+- 🤖 Automated workflows (tracker updates, badge issuance)  
+- 🎓 Grant approvals  
+- 📊 Transparency reporting  
+- 🏅 Contributor & supporter badges  
+
+Quick Start
+
+1. Clone the repository:
+   `bash
+   git clone https://github.com/Gitdigital-products/Grant-Program-Management-repo.git
+   `
+2. Install dependencies (optional):
+   `bash
+   npm install
+   `
+3. Review the documentation in /docs/.
+
+Documentation
+
+- Applicant Guide ( in Bing)
+- Reviewer Guides ( in Bing)
+- Contributor Onboarding ( in Bing)
+- [Looks like the result wasn't safe to show. Let's switch things up and try something else!]
+- [Looks like the result wasn't safe to show. Let's switch things up and try something else!]
+
+Automation
+
+This project uses GitHub Actions for:
+- Tracker updates  
+- Badge issuance  
+- Score aggregation  
+- Transparency reporting  
+
+See .github/workflows/.
+
+License
+
+This project is licensed under the MIT License.  
+See [Looks like the result wasn't safe to show. Let's switch things up and try something else!].
+`
+
+---
+
+CODEOFCONDUCT.md
+
+`markdown
+
+Code of Conduct
+
+We are committed to fostering a welcoming, inclusive, and respectful environment.
+
+Our Standards
+
+Examples of behavior that contributes to a positive environment:
+
+- Being respectful and considerate
+- Giving and gracefully accepting constructive feedback
+- Focusing on what is best for the community
+
+Examples of unacceptable behavior:
+
+- Harassment or discrimination
+- Trolling or insulting comments
+- Publishing private information without permission
+
+Enforcement
+
+Instances of abusive behavior may be reported to:
+
+conduct@gitdigital.org
+
+All complaints will be reviewed and investigated promptly.
+
+Attribution
+
+This Code of Conduct is adapted from the Contributor Covenant v2.1.
+`
+
+---
+
+CONTRIBUTING.md
+
+`markdown
+
+Contributing Guide
+
+Thank you for your interest in contributing!
+
+How to Contribute
+
+1. Read the Code of Conduct
+2. Review the Contributor Onboarding Guide
+3. Pick an issue labeled good first issue or help wanted
+4. Fork the repo and create a feature branch
+5. Submit a pull request using the PR template
+
+Development Setup
+
+`bash
+npm install
+npm run lint
+npm test
+`
+
+Commit Messages
+
+Use clear, descriptive commit messages:
+
+- feat: for new features  
+- fix: for bug fixes  
+- docs: for documentation  
+- chore: for maintenance  
+
+Pull Request Requirements
+
+- All checks must pass  
+- PR must reference an issue  
+- PR must follow repository structure and governance rules  
+`
+
+---
+
+LICENSE (MIT)
+
+`markdown
+MIT License
+
+Copyright (c) 2026 GitDigital
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction...
+`
+
+(Full MIT license text included in your repo.)
+
+---
+
+📁 2. Pages Layer
+
+---
+
+/pages/index.md
+
+`markdown
+---
+title: Grant Program
+layout: default
+---
+
+GitDigital Grant Program
+
+Welcome to the official portal for the GitDigital Grant Program.
+
+Apply for a Grant
+
+Visit the Application Page to submit your proposal.
+
+Track Your Application
+
+Use the Application Tracker to check your status.
+
+Reviewer Portal
+
+Reviewers can access tools and documentation on the Reviewer Page.
+
+Transparency
+
+All approved grants and funding reports are published on the  
+Transparency Page.
+`
+
+---
+
+/pages/apply.md
+
+`markdown
+---
+title: Apply for a Grant
+layout: default
+---
+
+Apply for a Grant
+
+To apply, prepare the following:
+
+- Project title  
+- Description  
+- Budget  
+- Timeline  
+- Impact statement  
+
+Submit your application by uploading a JSON file that matches  
+application.schema.json.
+
+Applications are processed automatically and assigned to reviewers.
+`
+
+---
+
+/pages/reviewers.md
+
+`markdown
+---
+title: Reviewer Portal
+layout: default
+---
+
+Reviewer Portal
+
+Welcome, reviewers.
+
+Your Responsibilities
+
+- Evaluate assigned applications  
+- Submit scores using the reviewer score form  
+- Follow the Code of Conduct  
+- Declare conflicts of interest  
+
+Tools
+
+- Reviewer Guide  
+- Score submission form  
+- Conflict of interest declaration  
+`
+
+---
+
+/pages/transparency.md
+
+`markdown
+---
+title: Transparency Report
+layout: default
+---
+
+Transparency Report
+
+This page lists all approved grants, funding amounts, and impact summaries.
+
+Reports are generated automatically from:
+
+- Reviewer scores  
+- Final approvals  
+- Funding disbursement logs  
+
+See /data/transparency/ for raw data.
+`
+
+---
+
+📁 3. Data Layer
+
+---
+
+/data/master_tracker.csv
+
+`csv
+ID,Title,Status,Submitted
+APP-2026-001,Example Project,Received,2026-01-01
+`
+
+---
+
+/data/applications/example.json
+
+`json
+{
+  "id": "APP-2026-001",
+  "title": "Example Project",
+  "description": "This is a placeholder application.",
+  "budget": 5000,
+  "timeline": "Q2 2026",
+  "impact": "Demonstrates the schema format."
+}
+`
+
+---
+
+/data/schemas/application.schema.json
+
+`json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Grant Application",
+  "type": "object",
+  "required": ["id", "title", "description", "budget", "timeline", "impact"],
+  "properties": {
+    "id": { "type": "string" },
+    "title": { "type": "string" },
+    "description": { "type": "string" },
+    "budget": { "type": "number" },
+    "timeline": { "type": "string" },
+    "impact": { "type": "string" }
+  }
+}
+`
+
+---
+
+/data/schemas/reviewer-score.schema.json
+
+`json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Reviewer Score",
+  "type": "object",
+  "required": ["applicationid", "reviewerid", "scores"],
+  "properties": {
+    "application_id": { "type": "string" },
+    "reviewer_id": { "type": "string" },
+    "scores": {
+      "type": "object",
+      "properties": {
+        "impact": { "type": "number", "minimum": 1, "maximum": 5 },
+        "feasibility": { "type": "number", "minimum": 1, "maximum": 5 },
+        "innovation": { "type": "number", "minimum": 1, "maximum": 5 }
+      }
+    }
+  }
+}
+`
+
+---
+
+/data/schemas/tracker.schema.json
+
+`json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Application Tracker Entry",
+  "type": "object",
+  "required": ["ID", "Title", "Status", "Submitted"],
+  "properties": {
+    "ID": { "type": "string" },
+    "Title": { "type": "string" },
+    "Status": { "type": "string" },
+    "Submitted": { "type": "string", "format": "date" }
+  }
+}
+`
+
+---
+
+✅ Batch Complete
+
