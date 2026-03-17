@@ -1,0 +1,367 @@
+🧩 Batch 3 — Automation Scripts + Workflows
+
+This batch includes:
+
+A. Scripts
+- scripts/validate-application.js
+- scripts/aggregate-scores.js
+- scripts/generate-transparency-report.js
+- scripts/assign-reviewers.js
+
+B. Workflows
+- .github/workflows/validate-applications.yml
+- .github/workflows/aggregate-scores.yml
+- .github/workflows/award-badges.yml
+- .github/workflows/publish-transparency.yml
+- .github/workflows/assign-reviewers.yml
+
+Each script is deterministic, modular, and schema‑driven — exactly the pattern you’ve been building across your ecosystem.
+
+Let’s generate the full batch.
+
+---
+
+📁 A. Scripts
+
+---
+
+scripts/validate-application.js
+
+`javascript
+// scripts/validate-application.js
+// Validates all application JSON files against application.schema.json
+
+const fs = require('fs');
+const path = require('path');
+const Ajv = require('ajv');
+
+const ajv = new Ajv();
+const schema = JSON.parse(fs.readFileSync('data/schemas/application.schema.json', 'utf8'));
+const validate = ajv.compile(schema);
+
+const dir = 'data/applications/';
+const files = fs.readdirSync(dir).filter(f => f.endsWith('.json'));
+
+let errors = [];
+
+files.forEach(file => {
+  const data = JSON.parse(fs.readFileSync(path.join(dir, file), 'utf8'));
+  const valid = validate(data);
+
+  if (!valid) {
+    errors.push({ file, errors: validate.errors });
+  }
+});
+
+if (errors.length > 0) {
+  console.error('Validation failed:', JSON.stringify(errors, null, 2));
+  process.exit(1);
+}
+
+console.log('All applications validated successfully.');
+`
+
+---
+
+scripts/aggregate-scores.js
+
+`javascript
+// scripts/aggregate-scores.js
+// Aggregates reviewer scores and outputs final results
+
+const fs = require('fs');
+const path = require('path');
+
+const scoresDir = 'data/scores/';
+const outputFile = 'data/aggregated-scores.json';
+
+const files = fs.existsSync(scoresDir)
+  ? fs.readdirSync(scoresDir).filter(f => f.endsWith('.json'))
+  : [];
+
+let aggregated = {};
+
+files.forEach(file => {
+  const score = JSON.parse(fs.readFileSync(path.join(scoresDir, file), 'utf8'));
+  const id = score.application_id;
+
+  if (!aggregated[id]) {
+    aggregated[id] = { impact: [], feasibility: [], innovation: [] };
+  }
+
+  aggregated[id].impact.push(score.scores.impact);
+  aggregated[id].feasibility.push(score.scores.feasibility);
+  aggregated[id].innovation.push(score.scores.innovation);
+});
+
+let results = {};
+
+Object.keys(aggregated).forEach(id => {
+  const s = aggregated[id];
+  results[id] = {
+    impact: average(s.impact),
+    feasibility: average(s.feasibility),
+    innovation: average(s.innovation),
+    total: average(s.impact) + average(s.feasibility) + average(s.innovation)
+  };
+});
+
+function average(arr) {
+  return arr.reduce((a, b) => a + b, 0) / arr.length;
+}
+
+fs.writeFileSync(outputFile, JSON.stringify(results, null, 2));
+console.log('Aggregated scores written to', outputFile);
+`
+
+---
+
+scripts/generate-transparency-report.js
+
+`javascript
+// scripts/generate-transparency-report.js
+// Generates transparency.md from aggregated scores + approvals
+
+const fs = require('fs');
+
+const scores = JSON.parse(fs.readFileSync('data/aggregated-scores.json', 'utf8'));
+const approvals = fs.existsSync('data/approvals.json')
+  ? JSON.parse(fs.readFileSync('data/approvals.json', 'utf8'))
+  : {};
+
+let md = `---
+title: Transparency Report
+layout: default
+---
+
+Transparency Report
+
+This report lists all approved grants, their scores, and funding amounts.
+
+| ID | Title | Score | Funding | Summary |
+|----|-------|--------|---------|---------|
+`;
+
+Object.keys(approvals).forEach(id => {
+  const a = approvals[id];
+  const s = scores[id] || {};
+
+  md += | ${id} | ${a.title} | ${s.total || 'N/A'} | $${a.funding} | ${a.summary} |\n;
+});
+
+fs.writeFileSync('pages/transparency.md', md);
+console.log('Transparency report updated.');
+`
+
+---
+
+scripts/assign-reviewers.js
+
+`javascript
+// scripts/assign-reviewers.js
+// Automatically assigns reviewers to applications
+
+const fs = require('fs');
+
+const applications = fs.readdirSync('data/applications').filter(f => f.endsWith('.json'));
+const reviewers = JSON.parse(fs.readFileSync('data/reviewers.json', 'utf8'));
+
+let assignments = {};
+
+applications.forEach((file, index) => {
+  const appId = file.replace('.json', '');
+  const reviewer = reviewers[index % reviewers.length];
+
+  assignments[appId] = reviewer;
+});
+
+fs.writeFileSync('data/reviewer-assignments.json', JSON.stringify(assignments, null, 2));
+console.log('Reviewer assignments generated.');
+`
+
+---
+
+📁 B. Workflows
+
+---
+
+.github/workflows/validate-applications.yml
+
+`yaml
+name: Validate Applications
+
+on:
+  pull_request:
+    paths:
+      - 'data/applications/*.json'
+      - 'data/schemas/application.schema.json'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate applications
+        run: node scripts/validate-application.js
+`
+
+---
+
+.github/workflows/aggregate-scores.yml
+
+`yaml
+name: Aggregate Scores
+
+on:
+  push:
+    paths:
+      - 'data/scores/*.json'
+
+jobs:
+  aggregate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Aggregate scores
+        run: node scripts/aggregate-scores.js
+
+      - name: Commit results
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add data/aggregated-scores.json
+          git diff --quiet || git commit -m "Aggregated scores"
+          git push
+`
+
+---
+
+.github/workflows/award-badges.yml
+
+`yaml
+name: Award Badges
+
+on:
+  push:
+    paths:
+      - 'data/approvals.json'
+      - 'data/scores/*.json'
+
+jobs:
+  award:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Award badges
+        run: node scripts/award-badges.js
+`
+
+(Batch 4 will include the badge-awarding script.)
+
+---
+
+.github/workflows/publish-transparency.yml
+
+`yaml
+name: Publish Transparency Report
+
+on:
+  workflow_run:
+    workflows: ["Aggregate Scores"]
+    types: [completed]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate transparency report
+        run: node scripts/generate-transparency-report.js
+
+      - name: Commit report
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add pages/transparency.md
+          git diff --quiet || git commit -m "Updated transparency report"
+          git push
+`
+
+---
+
+.github/workflows/assign-reviewers.yml
+
+`yaml
+name: Assign Reviewers
+
+on:
+  push:
+    paths:
+      - 'data/applications/*.json'
+      - 'data/reviewers.json'
+
+jobs:
+  assign:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Assign reviewers
+        run: node scripts/assign-reviewers.js
+
+      - name: Commit assignments
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add data/reviewer-assignments.json
+          git diff --quiet || git commit -m "Updated reviewer assignments"
+          git push
+`
+
+---
+
+✅ Batch 3 Complete
+
+This batch gives you:
+
+- A fully automated application pipeline
+- Deterministic reviewer assignment
+- Schema‑driven validation
+- Score aggregation
+- Transparency reporting
+- Workflow‑driven governance
+
+You now have the operational backbone of a real grant program.
+
+---
+
